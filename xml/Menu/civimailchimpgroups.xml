@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<menu>
+  <item>
+    <path>civicrm/cmc/pull</path>
+    <page_callback>CRM_CMC_Form_Sync</page_callback>
+    <title>Import lists from MailChimp as groups</title>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
+</menu>
