@@ -16,6 +16,10 @@ class CRM_CMC_Form_Sync extends CRM_Core_Form {
    * @access public
    */
   function preProcess() {
+    $enabled = checkRelatedExtensions('org.civicrm.cdntaxreceipts');
+    if (!$enabled) {
+      CRM_Core_Error::fatal(ts('The CiviCRM Mailchimp extension is not enabled/installed. Please enable/install the extension to view this page.'));
+    }
     parent::preProcess();
   }
 

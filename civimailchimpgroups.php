@@ -106,3 +106,53 @@ function civimailchimpgroups_civicrm_caseTypes(&$caseTypes) {
 function civimailchimpgroups_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
   _civimailchimpgroups_civix_civicrm_alterSettingsFolders($metaDataFolders);
 }
+
+/**
+ * Implementation of hook_civicrm_check
+ */
+function civimailchimpgroups_civicrm_check(&$messages) {
+  $cmcMessages = cmc_check_dependencies(TRUE);
+
+  foreach ($cmcMessages as &$message) {
+    $message->setLevel(5);
+  }
+
+  $messages += $cmcMessages;
+}
+
+/**
+ * Checks all dependencies for the extension
+ *
+ * @returns array  Array with one CRM_Utils_Check_Message object for each unmet dependency
+ */
+function cmc_check_dependencies($display = TRUE) {
+  $messages = array();
+
+  $enabled = checkRelatedExtensions('uk.co.vedaconsulting.mailchimp');
+  if (!$enabled) {
+    $messages[] = new CRM_Utils_Check_Message(
+      'cmc_mailchimp',
+        ts('This extension requires the CiviCRM Mailchimp extension to be downloaded and installed.'),
+        ts('CiviCRM Mailchimp groups requirements not met')
+    );
+    // Now display a nice alert for all these messages
+    if ($display) {
+      foreach ($messages as $message) {
+        CRM_Core_Session::setStatus($message->getMessage(), $message->getTitle(), 'error');
+      }
+    }
+  }
+  return $messages;
+}
+
+/**
+ * Function to check if related extension is enabled/disabled
+ *
+ * return array of enabled extensions 
+ */
+function checkRelatedExtensions($name) {
+  $enableDisable = NULL;
+  $sql = "SELECT is_active FROM civicrm_extension WHERE full_name = '{$name}'";
+  $enableDisable = CRM_Core_DAO::singleValueQuery($sql);
+  return $enableDisable;
+}
