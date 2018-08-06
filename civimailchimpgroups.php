@@ -128,7 +128,7 @@ function civimailchimpgroups_civicrm_check(&$messages) {
 function cmc_check_dependencies($display = TRUE) {
   $messages = array();
 
-  $enabled = checkRelatedExtensions('uk.co.vedaconsulting.mailchimp');
+  $enabled = cmccheckRelatedExtensions('uk.co.vedaconsulting.mailchimp');
   if (!$enabled) {
     $messages[] = new CRM_Utils_Check_Message(
       'cmc_mailchimp',
@@ -150,7 +150,7 @@ function cmc_check_dependencies($display = TRUE) {
  *
  * return array of enabled extensions 
  */
-function checkRelatedExtensions($name) {
+function cmccheckRelatedExtensions($name) {
   $enableDisable = NULL;
   $sql = "SELECT is_active FROM civicrm_extension WHERE full_name = '{$name}'";
   $enableDisable = CRM_Core_DAO::singleValueQuery($sql);

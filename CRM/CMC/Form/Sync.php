@@ -16,7 +16,7 @@ class CRM_CMC_Form_Sync extends CRM_Core_Form {
    * @access public
    */
   function preProcess() {
-    $enabled = checkRelatedExtensions('org.civicrm.cdntaxreceipts');
+    $enabled = cmccheckRelatedExtensions('uk.co.vedaconsulting.mailchimp');
     if (!$enabled) {
       CRM_Core_Error::fatal(ts('The CiviCRM Mailchimp extension is not enabled/installed. Please enable/install the extension to view this page.'));
     }
@@ -32,6 +32,9 @@ class CRM_CMC_Form_Sync extends CRM_Core_Form {
   public function buildQuickForm() {
     $fields = [
       'group' => ts('Group(s)'),
+      'unsub' => ts('Unsubscribes'),
+      'clean' => ts('On Holds'),
+      'optin' => ts('Opt Ins'),
     ];
     foreach ($fields as $field => $title) {
       $this->addElement('checkbox', $field, $title);
@@ -74,6 +77,9 @@ class CRM_CMC_Form_Sync extends CRM_Core_Form {
   public static function getRunner($submitValues) {
     $syncProcess = array(
       'group' => 'syncMailChimpGroup',
+      'unsub' => 'syncMailChimpUnsub',
+      'clean' => 'syncMailChimpClean',
+      'optin' => 'syncMailChimpOptIn',
     );
     // Setup the Queue
     $queue = CRM_Queue_Service::singleton()->create(array(
@@ -105,6 +111,21 @@ class CRM_CMC_Form_Sync extends CRM_Core_Form {
 
   public static function syncMailChimpGroup(CRM_Queue_TaskContext $ctx) {
     CRM_CMC_BAO_CMC::syncGroup();
+    return CRM_Queue_Task::TASK_SUCCESS;
+  }
+
+  public static function syncMailChimpUnsub(CRM_Queue_TaskContext $ctx) {
+    CRM_CMC_BAO_CMC::syncActivities('unsub');
+    return CRM_Queue_Task::TASK_SUCCESS;
+  }
+
+  public static function syncMailChimpClean(CRM_Queue_TaskContext $ctx) {
+    CRM_CMC_BAO_CMC::syncActivities('clean');
+    return CRM_Queue_Task::TASK_SUCCESS;
+  }
+
+  public static function syncMailChimpOptIn(CRM_Queue_TaskContext $ctx) {
+    CRM_CMC_BAO_CMC::syncActivities('optin');
     return CRM_Queue_Task::TASK_SUCCESS;
   }
 
