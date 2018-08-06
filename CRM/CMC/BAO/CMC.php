@@ -73,7 +73,7 @@ class CRM_CMC_BAO_CMC extends CRM_Mailchimp_Sync {
     if ($activity == 'optin') {
       $dao = CRM_Core_DAO::executeQuery("SELECT c.id as contact_id, e.email, m.mc_list_id, gc.group_id FROM civicrm_contact c
         INNER JOIN civicrm_email e ON e.contact_id = c.id
-        INNER JOIN civicrm_group_contact gc ON gc.contact_id = c.id
+        INNER JOIN civicrm_group_contact gc ON gc.contact_id = c.id AND gc.status = 'Added'
         INNER JOIN civicrm_value_mailchimp_settings m ON m.entity_id = gc.group_id");
     }
     while ($dao->fetch()) {
