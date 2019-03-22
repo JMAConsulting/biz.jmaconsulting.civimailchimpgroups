@@ -41,10 +41,16 @@ class CRM_CMC_BAO_CMC extends CRM_Mailchimp_Sync {
         "SELECT entity_id FROM civicrm_value_mailchimp_settings
          WHERE mc_list_id = '{$values->id}'"
       );
+      if (empty($id)) {
+        $id = CRM_Core_DAO::singleValueQuery(
+          "SELECT id FROM civicrm_group
+           WHERE title = '{$values->name}'"
+        );
+      }
       $result = civicrm_api3('Group', 'create', [
         'title' => $values->name,
         'id' => $id,
-        'source' => ts("Constant Contact"),
+        'source' => ts("MailChimp Group"),
         'is_active' => TRUE,
         'group_type' => "Mailing List",
         'visibility' => ["User and User Admin Only"],
